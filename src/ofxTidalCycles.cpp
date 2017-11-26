@@ -68,3 +68,44 @@ void ofxTidalCycles::update() {
 		}
 	}
 }
+
+void ofxTidalCycles::drawNotes(float left, float top, float width, float height) {
+	//draw notes
+	ofSetColor(255);
+	for (int i = 0; i < notes.size(); i++) {
+		if (notes[i].bar > lastBar - barBuffer) {
+			float h = height / (instNameBuffer.size());
+			float w = width / 32.0 / barBuffer;
+			float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
+			float y = h * notes[i].instNum + top;
+			if (ofGetElapsedTimef() - notes[i].timeStamp > notes[i].latency) {
+				ofDrawRectangle(x, y, w, h);
+			}
+		}
+	}
+}
+
+void ofxTidalCycles::drawGrid(float left, float top, float width, float height) {
+	ofNoFill();
+	ofSetColor(65);
+	for (int i = 0; i < barBuffer * 8; i++) {
+		float x = (width / barBuffer / 8) * i + left;
+		ofDrawLine(x, top, x, top + height);
+	}
+	ofSetColor(100);
+	for (int i = 0; i < barBuffer * 4; i++) {
+		float x = (width / barBuffer / 4) * i + left;
+		ofDrawLine(x, top, x, top + height);
+	}
+	ofSetColor(200);
+	ofDrawRectangle(left, top, width, height);
+	for (int i = 0; i < barBuffer; i++) {
+		float x = (width / barBuffer) * i + left;
+		ofDrawLine(x, top, x, top + height);
+	}
+	for (int i = 0; i < instNameBuffer.size(); i++) {
+		float y = (height / instNameBuffer.size()) * i + top;
+		ofDrawLine(left, y, left + width, y);
+	}
+	ofFill();
+}

@@ -17,6 +17,10 @@ class ofxTidalCycles{
 public:
 	ofxTidalCycles(int port, int barBuffer);
 	void update();
+
+	void drawGrid(float left, float top, float width, float height);
+	void drawNotes(float left, float top, float width, float height);
+
 	ofxOscReceiver receiver;
 	vector<TidalNote> notes;
 	vector<string> instNameBuffer;

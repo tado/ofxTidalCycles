@@ -16,16 +16,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	//draw notes
-	for (int i = 0; i < tidal->notes.size(); i++) {
-		float height = ofGetHeight() / (tidal->instNameBuffer.size());
-		float width = ofGetWidth() / 32.0 / tidal->barBuffer;
-		float x = (tidal->notes[i].cycle - tidal->lastBar + tidal->barBuffer - 1) * ofGetWidth() / tidal->barBuffer;
-		float y = height * tidal->notes[i].instNum;
-		if (ofGetElapsedTimef() - tidal->notes[i].timeStamp > tidal->notes[i].latency) {
-			ofDrawRectangle(x, y, width, height);
-		}
-	}
+	float margin = ofGetWidth() / 16.0;
+	tidal->drawGrid(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
+	tidal->drawNotes(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
 }
 
 //--------------------------------------------------------------
