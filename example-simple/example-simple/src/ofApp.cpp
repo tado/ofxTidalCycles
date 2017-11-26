@@ -5,7 +5,8 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(0);
 
-	tidal = new ofxTidalCycles(3333, 4);
+	//args: port number, buffering bar num
+	tidal = new ofxTidalCycles(3333, 8);
 }
 
 //--------------------------------------------------------------
