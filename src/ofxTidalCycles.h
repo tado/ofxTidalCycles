@@ -20,6 +20,7 @@ public:
 
 	void drawGrid(float left, float top, float width, float height);
 	void drawNotes(float left, float top, float width, float height);
+	void drawInstNames(float left, float top, float width, float height);
 
 	ofxOscReceiver receiver;
 	vector<TidalNote> notes;

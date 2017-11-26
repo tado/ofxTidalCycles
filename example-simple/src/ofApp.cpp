@@ -19,6 +19,7 @@ void ofApp::draw(){
 	float margin = ofGetWidth() / 16.0;
 	tidal->drawGrid(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
 	tidal->drawNotes(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
+	tidal->drawInstNames(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
 }
 
 //--------------------------------------------------------------

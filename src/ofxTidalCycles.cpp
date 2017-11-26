@@ -78,7 +78,7 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 			float w = width / 32.0 / barBuffer;
 			float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
 			float y = h * notes[i].instNum + top;
-			if (ofGetElapsedTimef() - notes[i].timeStamp > notes[i].latency) {
+			if (ofGetElapsedTimef() - notes[i].timeStamp > notes[i].latency && y < height) {
 				ofDrawRectangle(x, y, w, h);
 			}
 		}
@@ -108,4 +108,12 @@ void ofxTidalCycles::drawGrid(float left, float top, float width, float height) 
 		ofDrawLine(left, y, left + width, y);
 	}
 	ofFill();
+}
+
+void ofxTidalCycles::drawInstNames(float left, float top, float width, float height) {
+	ofSetColor(255);
+	for (int i = 0; i < instNameBuffer.size(); i++) {
+		float y = (height / instNameBuffer.size()) * i + top + 15;
+		ofDrawBitmapStringHighlight(instNameBuffer[i], left+5, y);
+	}
 }
