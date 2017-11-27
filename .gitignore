@@ -140,3 +140,9 @@ Desktop.ini
 *.user
 *.sln
 *.TMP
+*.make
+*.pbxproj
+*.xcscheme
+example-simple/Makefile
+*.plist
+*.xcconfig
