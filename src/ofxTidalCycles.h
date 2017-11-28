@@ -6,6 +6,7 @@ class TidalNote {
 public:
 	string instName;
 	float cycle;
+	float cps;
 	int instNum;
 	int bar;
 	float fract;

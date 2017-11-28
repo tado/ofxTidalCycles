@@ -3,8 +3,6 @@
 ofxTidalCycles::ofxTidalCycles(int port, int _barBuffer){
 	barBuffer = _barBuffer;
 	receiver.setup(port);
-	ofSetFrameRate(60);
-	ofBackground(0);
 	lastBar = 0;	
 }
 
@@ -44,6 +42,10 @@ void ofxTidalCycles::update() {
 						note.instNum = instNameBuffer.size() - 1;
 					}
 				}
+				//get CPS
+				if (m.getArgAsString(i) == "cps") {
+					note.cps = m.getArgAsFloat(i + 1);
+				}
 				//get latency
 				if (m.getArgAsString(i) == "latency") {
 					note.latency = m.getArgAsFloat(i + 1);
@@ -73,12 +75,15 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 	//draw notes
 	ofSetColor(255);
 	for (int i = 0; i < notes.size(); i++) {
-		if (notes[i].bar > lastBar - barBuffer) {
+		if (ofGetElapsedTimef() - notes[i].timeStamp < 8.0) {
 			float h = height / (instNameBuffer.size());
-			float w = width / 32.0 / barBuffer;
-			float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
+			float w = width / 64.0 / barBuffer;
+			//float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
+			float x = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
 			float y = h * notes[i].instNum + top;
-			if (ofGetElapsedTimef() - notes[i].timeStamp > notes[i].latency && y < height) {
+			if (ofGetElapsedTimef() - notes[i].timeStamp >= notes[i].latency 
+				&& x < width + left - w
+				&& y < height) {
 				ofDrawRectangle(x, y, w, h);
 			}
 		}
@@ -87,22 +92,8 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 
 void ofxTidalCycles::drawGrid(float left, float top, float width, float height) {
 	ofNoFill();
-	ofSetColor(65);
-	for (int i = 0; i < barBuffer * 8; i++) {
-		float x = (width / barBuffer / 8) * i + left;
-		ofDrawLine(x, top, x, top + height);
-	}
-	ofSetColor(100);
-	for (int i = 0; i < barBuffer * 4; i++) {
-		float x = (width / barBuffer / 4) * i + left;
-		ofDrawLine(x, top, x, top + height);
-	}
-	ofSetColor(200);
+	ofSetColor(127);
 	ofDrawRectangle(left, top, width, height);
-	for (int i = 0; i < barBuffer; i++) {
-		float x = (width / barBuffer) * i + left;
-		ofDrawLine(x, top, x, top + height);
-	}
 	for (int i = 0; i < instNameBuffer.size(); i++) {
 		float y = (height / instNameBuffer.size()) * i + top;
 		ofDrawLine(left, y, left + width, y);
