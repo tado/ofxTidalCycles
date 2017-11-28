@@ -40,7 +40,7 @@ void ofxTidalCycles::update() {
 					note.fract = fract;
 					beatCount = int(fract * resolution);
 					if (note.bar > lastBar) {
-						beatMonitor();
+						//beatMonitor();
 						calcStat();
 						beatShift();
 					}
@@ -100,7 +100,7 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 	//draw notes
 	ofSetColor(255);
 	for (int i = 0; i < notes.size(); i++) {
-		if (ofGetElapsedTimef() - notes[i].timeStamp < 8.0) {
+		if (ofGetElapsedTimef() - notes[i].timeStamp < 16) {
 			float h = height / (instNameBuffer.size());
 			float w = width / 64.0 / barBuffer;
 			//float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
@@ -169,20 +169,6 @@ void ofxTidalCycles::calcStat() {
 		syncopation[i] = 0.0;
 		noteNum[i] = 0.0;
 	}
-
-	/*
-	//calclate all part matrix for joint entropy
-	int *allVector = (int *)calloc(resolution, sizeof(int));
-	for (int i = 0; i < instNumMax; i++) {
-		for (int j = 0; j < resolution; j++) {
-			allVector[j] += int(noteMatrix[i][max2 - resolution + j]);
-			if (allVector[j] > 1) {
-				allVector[j] = 1;
-			}
-		}
-	}
-	*/
-
 	int instNumMax = instNameBuffer.size();
 	for (int i = 0; i < instNumMax; i++) {
 		//calculate syncopation
@@ -193,18 +179,11 @@ void ofxTidalCycles::calcStat() {
 		int digit = stoi(bitStr, nullptr, 2);
 		syncopation[i] = SG[digit];
 
+		/*
 		cout << "digit " << i << " : "
 			<< bitStr << " : " << digit
 			<< " syncopation : " << SG[digit]
 			<< endl;
-
-		/*
-		//calc entropy
-		uint *currentVector = (uint *) calloc(resolution,sizeof(uint));
-		for (int j = 0; j < resolution; j++) {
-		currentVector[j] = uint(noteMatrix[i][max2 - resolution + j]);
-		}
-		entropy[i] = calcEntropy(currentVector, resolution);
 		*/
 
 		//calc note count
