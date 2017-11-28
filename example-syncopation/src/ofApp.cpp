@@ -21,6 +21,7 @@ void ofApp::draw(){
 	tidal->drawGrid(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
 	tidal->drawNotes(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
 	tidal->drawInstNames(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
+	tidal->drawGraph();
 }
 
 //--------------------------------------------------------------
