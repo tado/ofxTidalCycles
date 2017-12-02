@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	//ofSetFrameRate(60);
+	ofSetFrameRate(60);
 	ofBackground(0);
 
 	//args: port number, buffering bar num
@@ -18,11 +18,13 @@ void ofApp::update(){
 void ofApp::draw(){
 	float marginTop = ofGetWidth() / 32.0;
 	float marginLeft = ofGetWidth() / 32.0;
-	tidal->drawBg(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
-	tidal->drawGrid(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
-	tidal->drawNotes(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
-	tidal->drawInstNames(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
-	tidal->drawGraph();
+	float w = ofGetWidth() - marginLeft * 2;
+	float h = ofGetHeight() / 1.5 - marginTop * 2.0;
+	tidal->drawBg(marginLeft, marginTop, w, h);
+	tidal->drawGrid(marginLeft, marginTop, w, h);
+	tidal->drawNotes(marginLeft, marginTop, w, h);
+	tidal->drawInstNames(marginLeft, marginTop, w, h);
+	tidal->drawGraph(marginTop + h + 40);
 }
 
 //--------------------------------------------------------------

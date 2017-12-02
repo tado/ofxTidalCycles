@@ -23,19 +23,19 @@ public:
 	void drawBg(float left, float top, float width, float height);
 	void drawNotes(float left, float top, float width, float height);
 	void drawInstNames(float left, float top, float width, float height);
-	void drawGraph();
+	void drawGraph(float top);
 
 	void beatShift();
 	void beatMonitor();
 	void calcStat();
-
-
+	
 	ofxOscReceiver receiver;
 	vector<TidalNote> notes;
 	vector<string> instNameBuffer;
 
 	int lastBar;
 	int barBuffer;
+	static const int noteMax = 1024 * 8;
 
 	int resolution;
 	static const int max1 = 128;

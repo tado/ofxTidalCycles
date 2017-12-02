@@ -73,31 +73,35 @@ void ofxTidalCycles::update() {
 				}
 			}
 			notes.push_back(note);
+			if (notes.size() > noteMax) {
+				notes.erase(notes.begin());
+			}
 
 			//add to note matrix
 			for (int i = 0; i < notes.size(); i++) {
 				noteMatrix[note.instNum][beatCount + max2 - resolution] = 1;
 			}
-		}
-	}
 
-	//erace unused inst
-	for (int i = 0; i < instNameBuffer.size(); i++) {
-		bool instExist = false;
-		for (int j = 0; j < notes.size(); j++) {
-			if (notes[j].bar > lastBar - barBuffer) {
-				if (notes[j].instName == instNameBuffer[i]) {
-					instExist = true;
+			//erace unused inst
+			for (int i = 0; i < instNameBuffer.size(); i++) {
+				bool instExist = false;
+				for (int j = 0; j < notes.size(); j++) {
+					if (notes[j].bar > lastBar - barBuffer) {
+						if (notes[j].instName == instNameBuffer[i]) {
+							instExist = true;
+						}
+					}
+				}
+				if (instExist == false) {
+					instNameBuffer.erase(instNameBuffer.begin() + i);
 				}
 			}
 		}
-		if (instExist == false) {
-			instNameBuffer.erase(instNameBuffer.begin() + i);
-		}
 	}
 
+	//fade background
 	for (int i = 0; i < instNameBuffer.size(); i++) {
-		bgAlpha[i] *= 0.65;
+		bgAlpha[i] *= 0.6;
 	}
 }
 
@@ -105,22 +109,22 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 	//draw notes
 	ofSetColor(255);
 	for (int i = 0; i < notes.size(); i++) {
-		if (ofGetElapsedTimef() - notes[i].timeStamp < 16) {
+		if (ofGetElapsedTimef() - notes[i].timeStamp < 32) {
 			float h = height / (instNameBuffer.size());
 			float w = width / 32.0 / barBuffer;
-			float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
-			float x2 = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
+			//float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
+			float x = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
 			float y = h * notes[i].instNum + top;
 			if (ofGetElapsedTimef() - notes[i].timeStamp >= notes[i].latency
-				//&& x < width + left - w
-				&& x > left
+				&& x < width + left - w
+				//&& x > left
 				&& y < height) {
 				ofDrawRectangle(x, y, w, h);
 			}
 
 			//draw Background
-			if (abs(x2 - left) < w) {
-				bgAlpha[notes[i].instNum] = 512;
+			if (abs(x - left) < w) {
+				bgAlpha[notes[i].instNum] = 255 * 1.5;
 			}
 		}
 	}
@@ -225,14 +229,14 @@ void ofxTidalCycles::calcStat() {
 	}
 }
 
-void ofxTidalCycles::drawGraph() {
+void ofxTidalCycles::drawGraph(float top) {
 	//draw graph
 	float x, y, gwidth, gheight, graphX;
 	float graphWidth;
 	int instNumMax = instNameBuffer.size();
 
 	x = 20;
-	y = ofGetHeight() / 2 + 20;
+	y = top;
 	graphX = 70;
 	gwidth = ofGetWidth() - 40 - graphX;
 	gheight = 10;
