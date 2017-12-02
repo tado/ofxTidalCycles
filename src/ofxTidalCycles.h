@@ -20,6 +20,7 @@ public:
 	void update();
 
 	void drawGrid(float left, float top, float width, float height);
+	void drawBg(float left, float top, float width, float height);
 	void drawNotes(float left, float top, float width, float height);
 	void drawInstNames(float left, float top, float width, float height);
 	void drawGraph();
@@ -32,6 +33,7 @@ public:
 	ofxOscReceiver receiver;
 	vector<TidalNote> notes;
 	vector<string> instNameBuffer;
+
 	int lastBar;
 	int barBuffer;
 
@@ -44,5 +46,6 @@ public:
 	//double jointEntropy[max1];
 	//double mutualInformation[max1];
 	int noteNum[max1];
+	int bgAlpha[max1];
 };
 

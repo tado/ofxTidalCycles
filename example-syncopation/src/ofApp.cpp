@@ -6,7 +6,7 @@ void ofApp::setup(){
 	ofBackground(0);
 
 	//args: port number, buffering bar num
-	tidal = new ofxTidalCycles(3333, 4);
+	tidal = new ofxTidalCycles(3333, 3);
 }
 
 //--------------------------------------------------------------
@@ -18,6 +18,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	float marginTop = ofGetWidth() / 32.0;
 	float marginLeft = ofGetWidth() / 32.0;
+	tidal->drawBg(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
 	tidal->drawGrid(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
 	tidal->drawNotes(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);
 	tidal->drawInstNames(marginLeft, marginTop, ofGetWidth() - marginLeft * 2, ofGetHeight() / 2 - marginTop * 2);

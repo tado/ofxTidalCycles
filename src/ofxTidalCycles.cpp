@@ -13,6 +13,7 @@ ofxTidalCycles::ofxTidalCycles(int port, int _barBuffer) {
 	for (int i = 0; i < max1; i++) {
 		syncopation[i] = 0;
 		noteNum[i] = 0;
+		bgAlpha[i] = 0;
 		for (int j = 0; j < max2; j++) {
 			noteMatrix[i][j] = 0;
 		}
@@ -94,6 +95,10 @@ void ofxTidalCycles::update() {
 			instNameBuffer.erase(instNameBuffer.begin() + i);
 		}
 	}
+
+	for (int i = 0; i < instNameBuffer.size(); i++) {
+		bgAlpha[i] *= 0.65;
+	}
 }
 
 void ofxTidalCycles::drawNotes(float left, float top, float width, float height) {
@@ -102,14 +107,20 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 	for (int i = 0; i < notes.size(); i++) {
 		if (ofGetElapsedTimef() - notes[i].timeStamp < 16) {
 			float h = height / (instNameBuffer.size());
-			float w = width / 64.0 / barBuffer;
-			//float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
-			float x = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
+			float w = width / 32.0 / barBuffer;
+			float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
+			float x2 = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
 			float y = h * notes[i].instNum + top;
 			if (ofGetElapsedTimef() - notes[i].timeStamp >= notes[i].latency
-				&& x < width + left - w
+				//&& x < width + left - w
+				&& x > left
 				&& y < height) {
 				ofDrawRectangle(x, y, w, h);
+			}
+
+			//draw Background
+			if (abs(x2 - left) < w) {
+				bgAlpha[notes[i].instNum] = 512;
 			}
 		}
 	}
@@ -122,6 +133,23 @@ void ofxTidalCycles::drawGrid(float left, float top, float width, float height) 
 	for (int i = 0; i < instNameBuffer.size(); i++) {
 		float y = (height / instNameBuffer.size()) * i + top;
 		ofDrawLine(left, y, left + width, y);
+	}
+	ofFill();
+}
+
+void ofxTidalCycles::drawBg(float left, float top, float width, float height) {
+	ofDrawRectangle(left, top, width, height);
+	for (int i = 0; i < instNameBuffer.size(); i++) {
+		float bg;
+		if (bgAlpha[i] > 255) {
+			bg = 255;
+		} else {
+			bg = bgAlpha[i];
+		}
+		ofSetColor(bg);
+		float h = (height / instNameBuffer.size());
+		float y = h * i + top;
+		ofDrawRectangle(left, y, width, h);
 	}
 	ofFill();
 }
