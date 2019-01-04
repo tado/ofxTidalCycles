@@ -52,7 +52,8 @@ void ofxTidalCycles::update() {
 					instN = m.getArgAsInt(i + 1);
 				}
 				if (m.getArgAsString(i) == "s") {
-					string s = m.getArgAsString(i + 1) + ofToString(instN);
+					//string s = m.getArgAsString(i + 1) + ofToString(instN);
+					string s = m.getArgAsString(i + 1);
 					n.s = s;
 					n.instNum = 0;
 					bool newInst = true;
