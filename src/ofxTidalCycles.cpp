@@ -21,110 +21,99 @@ ofxTidalCycles::ofxTidalCycles(int port, int _barBuffer) {
 }
 
 void ofxTidalCycles::update() {
+	ofSetColor(255);
+	int beatCount;
 	while (receiver.hasWaitingMessages()) {
 		ofxOscMessage m;
 		receiver.getNextMessage(m);
-		float cycle;
-		int beatCount;
-		//parse when tidal cycle message comming
 		if (m.getAddress() == "/play2") {
-			TidalNote note;
-			note.timeStamp = ofGetElapsedTimef();
+			TidalNote n;
+			int instN = 0;
 			for (int i = 0; i < m.getNumArgs(); i += 2) {
-				//parse cycle
-				float bar, fract;
 				if (m.getArgAsString(i) == "cycle") {
-					cycle = m.getArgAsFloat(i + 1);
-					note.cycle = cycle;
-					fract = modf(cycle, &bar);
-					note.bar = int(bar);
-					note.fract = fract;
+					float cycle = m.getArgAsFloat(i + 1);
+					float bar;
+					float fract = modff(cycle, &bar);
+					if (notes.size() == 0) {
+						startBar = bar;
+					}
+					n.cycle = cycle;
+					n.fract = fract;
+					n.bar = bar;
 					beatCount = int(fract * resolution);
-					if (note.bar > lastBar) {
+					if (n.bar > lastBar) {
 						//beatMonitor();
 						calcStat();
 						beatShift();
 					}
 					lastBar = int(bar);
 				}
-				//parse inst name
+				if (m.getArgAsString(i) == "n") {
+					instN = m.getArgAsInt(i + 1);
+				}
 				if (m.getArgAsString(i) == "s") {
-					note.instName = m.getArgAsString(i + 1);
+					string s = m.getArgAsString(i + 1) + ofToString(instN);
+					n.s = s;
+					n.instNum = 0;
 					bool newInst = true;
 					for (int i = 0; i < instNameBuffer.size(); i++) {
-						if (note.instName == instNameBuffer[i]) {
+						if (n.s == instNameBuffer[i]) {
 							newInst = false;
-							note.instNum = i;
+							n.instNum = i;
 						}
 					}
 					if (newInst) {
-						instNameBuffer.push_back(note.instName);
+						instNameBuffer.push_back(n.s);
 						std::sort(instNameBuffer.begin(), instNameBuffer.end());
-						note.instNum = instNameBuffer.size() - 1;
+						n.instNum = instNameBuffer.size() - 1;
 					}
 				}
-				//get CPS
 				if (m.getArgAsString(i) == "cps") {
-					note.cps = m.getArgAsFloat(i + 1);
+					float cps = m.getArgAsFloat(i + 1);
+					n.cps = cps;
 				}
-				//get latency
-				if (m.getArgAsString(i) == "latency") {
-					note.latency = m.getArgAsFloat(i + 1);
+
+				
+				//erace unused inst
+				for (int i = 0; i < instNameBuffer.size(); i++) {
+					bool instExist = false;
+					for (int j = 0; j < notes.size(); j++) {
+						if (notes[j].bar > notes[notes.size() - 1].bar - maxBar * 2) {
+							if (notes[j].s == instNameBuffer[i]) {
+								instExist = true;
+							}
+						}
+					}
+					if (instExist == false) {
+						instNameBuffer.erase(instNameBuffer.begin() + i);
+					}
 				}
 			}
-			notes.push_back(note);
-			if (notes.size() > noteMax) {
-				notes.erase(notes.begin());
-			}
+			notes.push_back(n);
 
 			//add to note matrix
 			for (int i = 0; i < notes.size(); i++) {
-				noteMatrix[note.instNum][beatCount + max2 - resolution] = 1;
+				noteMatrix[n.instNum][beatCount + max2 - resolution] = 1;
 			}
 
-			//erace unused inst
-			for (int i = 0; i < instNameBuffer.size(); i++) {
-				bool instExist = false;
-				for (int j = 0; j < notes.size(); j++) {
-					if (notes[j].bar > lastBar - barBuffer) {
-						if (notes[j].instName == instNameBuffer[i]) {
-							instExist = true;
-						}
-					}
-				}
-				if (instExist == false) {
-					instNameBuffer.erase(instNameBuffer.begin() + i);
-				}
+			if (notes.size() > noteMax) {
+				notes.erase(notes.begin());
 			}
 		}
-	}
-
-	//fade background
-	for (int i = 0; i < instNameBuffer.size(); i++) {
-		bgAlpha[i] *= 0.6;
 	}
 }
 
 void ofxTidalCycles::drawNotes(float left, float top, float width, float height) {
-	//draw notes
-	ofSetColor(255);
-	for (int i = 0; i < notes.size(); i++) {
-		if (ofGetElapsedTimef() - notes[i].timeStamp < 32) {
-			float h = height / (instNameBuffer.size());
-			float w = width / 32.0 / barBuffer;
-			//float x = (notes[i].cycle - lastBar + barBuffer - 1) * width / barBuffer + left;
-			float x = ofMap(ofGetElapsedTimef() - notes[i].timeStamp - notes[i].latency, 0, barBuffer, left, width);
-			float y = h * notes[i].instNum + top;
-			if (ofGetElapsedTimef() - notes[i].timeStamp >= notes[i].latency
-				&& x < width + left - w
-				//&& x > left
-				&& y < height) {
+	if (instNameBuffer.size() > 0) {
+		for (int i = 0; i < notes.size(); i++) {
+			int bar = notes[notes.size() - 1].bar - notes[i].bar;
+			float x = ofMap(bar - notes[i].fract, -1, maxBar, width+left, left);
+			float y = ofMap(notes[i].instNum, 0, instNameBuffer.size(), top, height+top);
+			float h = height / instNameBuffer.size();
+			float w = width / 128.0;
+			if (x > left) {
+				ofSetColor(255);
 				ofDrawRectangle(x, y, w, h);
-			}
-
-			//draw Background
-			if (abs(x - left) < w) {
-				bgAlpha[notes[i].instNum] = 255 * 1.5;
 			}
 		}
 	}
@@ -147,7 +136,8 @@ void ofxTidalCycles::drawBg(float left, float top, float width, float height) {
 		float bg;
 		if (bgAlpha[i] > 255) {
 			bg = 255;
-		} else {
+		}
+		else {
 			bg = bgAlpha[i];
 		}
 		ofSetColor(bg);

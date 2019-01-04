@@ -4,10 +4,11 @@
 
 class TidalNote {
 public:
-	string instName;
+	string s;
+	int instNum;
 	float cycle;
 	float cps;
-	int instNum;
+	int startBar;
 	int bar;
 	float fract;
 	float latency;
@@ -32,6 +33,9 @@ public:
 	ofxOscReceiver receiver;
 	vector<TidalNote> notes;
 	vector<string> instNameBuffer;
+
+	float startBar;
+	static const int maxBar = 4;
 
 	int lastBar;
 	int barBuffer;

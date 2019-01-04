@@ -146,3 +146,7 @@ Desktop.ini
 example-simple/Makefile
 *.plist
 *.xcconfig
+*.db-shm
+*.db-wal
+*.make
+*.make
