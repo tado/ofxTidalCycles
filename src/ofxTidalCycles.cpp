@@ -28,6 +28,7 @@ void ofxTidalCycles::update() {
 		receiver.getNextMessage(m);
 		if (m.getAddress() == "/play2") {
 			TidalNote n;
+			n.timeStamp = ofGetElapsedTimef();
 			int instN = 0;
 			for (int i = 0; i < m.getNumArgs(); i += 2) {
 				if (m.getArgAsString(i) == "cycle") {
@@ -52,8 +53,8 @@ void ofxTidalCycles::update() {
 					instN = m.getArgAsInt(i + 1);
 				}
 				if (m.getArgAsString(i) == "s") {
-					//string s = m.getArgAsString(i + 1) + ofToString(instN);
-					string s = m.getArgAsString(i + 1);
+					string s = m.getArgAsString(i + 1) + ofToString(instN);
+					//string s = m.getArgAsString(i + 1);
 					n.s = s;
 					n.instNum = 0;
 					bool newInst = true;
