@@ -31,7 +31,6 @@ void ofxTidalCycles::update() {
                 if (m.getAddress() == "/play2") {
                         TidalNote n;
                         n.timeStamp = ofGetElapsedTimef();
-                        int instN = 0;
                         for (int i = 0; i < m.getNumArgs(); i += 2) {
                                 if (m.getArgAsString(i) == "cycle") {
                                         float cycle = m.getArgAsFloat(i + 1);
@@ -52,7 +51,6 @@ void ofxTidalCycles::update() {
                                         lastBar = int(bar);
                                 }
                                 if (m.getArgAsString(i) == "n") {
-                                        instN = m.getArgAsInt(i + 1);
                                         n.n = m.getArgAsInt(i + 1);
                                         get<1>(n.sound) = n.n;
                                 }
@@ -72,7 +70,6 @@ void ofxTidalCycles::update() {
                                 if (m.getArgAsString(i) == "s") {
                                         n.s = m.getArgAsString(i + 1);
                                         get<0>(n.sound) = n.s;
-                                        n.instNum = 0;
                                         bool newInst = true;
                                         for (int i = 0; i < instBuffer.size(); i++) {
                                                 if ( n.sound == instBuffer[i] ) {
@@ -87,7 +84,6 @@ void ofxTidalCycles::update() {
                                         if (newInst) {
                                                 instBuffer.push_back(n.sound);
                                                 ofSort(instBuffer);
-                                                n.instNum = instBuffer.size() - 1;
                                         }
                                 }
                                 if (m.getArgAsString(i) == "cps") {
@@ -198,8 +194,8 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
         if (instBuffer.size() > 0) {
                 float h, y, w = width / 128.0;
                 for ( auto n : notes ) {
-                        int bar = notes[notes.size() - 1].bar - notes[i].bar;
-                        float x = ofMap(bar - notes[i].fract, -1, maxBar, width+left, left);
+                        int bar = notes[notes.size() - 1].bar - n.bar;
+                        float x = ofMap(bar - n.fract, -1, maxBar, width+left, left);
                         h = orbCellHeight / get<2>(n.orbit);
                         y = ofMap(n.n, get<3>(n.orbit), get<4>(n.orbit), orbCellHeight * get<1>(n.orbit),  orbCellHeight * get<1>(n.orbit) + orbCellHeight - h ) + top;
                         if (x > left) {
