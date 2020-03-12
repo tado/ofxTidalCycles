@@ -207,6 +207,7 @@ void ofxTidalCycles::drawNotes(float left, float top, float width, float height)
 }
 
 void ofxTidalCycles::drawGrid(float left, float top, float width, float height) {
+        float orbCellY;
         ofNoFill();
         ofSetColor(127);
         ofDrawRectangle(left, top, width, height);
